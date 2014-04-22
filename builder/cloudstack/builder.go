@@ -43,9 +43,9 @@ type config struct {
 
 	// These are unexported since they're set by other fields
 	// being set.
-	sshTimeout       time.Duration
-	stateTimeout     time.Duration
-	detachISOWait    time.Duration
+	sshTimeout    time.Duration
+	stateTimeout  time.Duration
+	detachISOWait time.Duration
 
 	HTTPDir     string `mapstructure:"http_directory"`
 	HTTPPortMin uint   `mapstructure:"http_port_min"`
@@ -157,16 +157,17 @@ func (b *Builder) Prepare(raws ...interface{}) ([]string, error) {
 	}
 
 	templates := map[string]*string{
-		"api_url":         &b.config.APIURL,
-		"api_key":         &b.config.APIKey,
-		"secret":          &b.config.Secret,
-		"template_name":   &b.config.TemplateName,
-		"ssh_username":    &b.config.SSHUsername,
-		"ssh_timeout":     &b.config.RawSSHTimeout,
-		"ssh_key_path":    &b.config.SSHKeyPath,
-		"state_timeout":   &b.config.RawStateTimeout,
-		"http_directory":  &b.config.HTTPDir,
-		"detach_iso_wait": &b.config.RawDetachISOWait,
+		"api_url":               &b.config.APIURL,
+		"api_key":               &b.config.APIKey,
+		"secret":                &b.config.Secret,
+		"template_name":         &b.config.TemplateName,
+		"template_display_text": &b.config.TemplateDisplayText,
+		"ssh_username":          &b.config.SSHUsername,
+		"ssh_timeout":           &b.config.RawSSHTimeout,
+		"ssh_key_path":          &b.config.SSHKeyPath,
+		"state_timeout":         &b.config.RawStateTimeout,
+		"http_directory":        &b.config.HTTPDir,
+		"detach_iso_wait":       &b.config.RawDetachISOWait,
 	}
 
 	for n, ptr := range templates {

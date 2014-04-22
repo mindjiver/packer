@@ -31,7 +31,8 @@ func (a *Artifact) Id() string {
 }
 
 func (a *Artifact) String() string {
-	return fmt.Sprintf("A template was created: %v", a.templateName)
+	return fmt.Sprintf("A template was created: UUID: %v - Name: %v",
+		a.templateId, a.templateName)
 }
 
 func (a *Artifact) Destroy() error {
