@@ -22,6 +22,7 @@ var builtins = map[string]string{
 	"mitchellh.vmware":            "vmware",
 	"pearkes.digitalocean":        "digitalocean",
 	"packer.parallels":            "parallels",
+	"mindjiver.cloudstack":        "cloudstack",
 }
 
 type Config struct {
@@ -220,6 +221,8 @@ func providerForName(name string) Provider {
 		return new(VMwareProvider)
 	case "parallels":
 		return new(ParallelsProvider)
+	case "cloudstack":
+		return new(CloudStackProvider)
 	default:
 		return nil
 	}
