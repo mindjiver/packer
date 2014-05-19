@@ -15,6 +15,7 @@ type stepDeployVirtualMachine struct {
 type bootCommandTemplateData struct {
 	HTTPIP   string
 	HTTPPort string
+	Name     string
 }
 
 func (s *stepDeployVirtualMachine) Run(state multistep.StateBag) multistep.StepAction {
@@ -98,6 +99,7 @@ func processTemplatedUserdata(state multistep.StateBag) multistep.StepAction {
 	tplData := &bootCommandTemplateData{
 		httpIP,
 		httpPort,
+		c.TemplateName,
 	}
 
 	userData, err := c.tpl.Process(c.UserData, tplData)
