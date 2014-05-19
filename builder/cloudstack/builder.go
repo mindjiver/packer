@@ -170,7 +170,6 @@ func (b *Builder) Prepare(raws ...interface{}) ([]string, error) {
 		"template_id":           &b.config.TemplateId,
 		"zone_id":               &b.config.ZoneId,
 		"disk_offering_id":      &b.config.DiskOfferingId,
-		"user_data":             &b.config.UserData,
 		"hypervisor":            &b.config.Hypervisor,
 		"template_name":         &b.config.TemplateName,
 		"template_display_text": &b.config.TemplateDisplayText,
@@ -183,6 +182,17 @@ func (b *Builder) Prepare(raws ...interface{}) ([]string, error) {
 		if err != nil {
 			errs = packer.MultiErrorAppend(
 				errs, fmt.Errorf("Error processing %s: %s", n, err))
+		}
+	}
+
+	validates := map[string]*string{
+		"user_data":             &b.config.UserData,
+	}
+
+	for n, ptr := range validates {
+		if err := b.config.tpl.Validate(*ptr); err != nil {
+			errs = packer.MultiErrorAppend(
+				errs, fmt.Errorf("Error parsing %s: %s", n, err))
 		}
 	}
 
