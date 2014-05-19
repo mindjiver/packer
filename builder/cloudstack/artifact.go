@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/mindjiver/gopherstack"
 	"log"
+	"net/url"
 )
 
 type Artifact struct {
@@ -27,7 +28,9 @@ func (*Artifact) Files() []string {
 }
 
 func (a *Artifact) Id() string {
-	return a.templateName
+	values := url.Values{}
+	values.Set("templateid", a.templateId)
+	return a.client.BaseURL + "?" + values.Encode()
 }
 
 func (a *Artifact) String() string {
