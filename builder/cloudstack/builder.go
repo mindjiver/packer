@@ -232,11 +232,6 @@ func (b *Builder) Prepare(raws ...interface{}) ([]string, error) {
 			errs, errors.New("zone_id must be specified"))
 	}
 
-	if len(b.config.NetworkIds) < 1 {
-		errs = packer.MultiErrorAppend(
-			errs, errors.New("network_ids must be specified"))
-	}
-
 	sshTimeout, err := time.ParseDuration(b.config.RawSSHTimeout)
 	if err != nil {
 		errs = packer.MultiErrorAppend(
