@@ -24,9 +24,9 @@ const BuilderId = "mindjiver.cloudstack"
 type config struct {
 	common.PackerConfig `mapstructure:",squash"`
 
-	APIURL string `mapstructure:"api_url"`
-	APIKey string `mapstructure:"api_key"`
-	Secret string `mapstructure:"secret"`
+	APIURL    string `mapstructure:"api_url"`
+	APIKey    string `mapstructure:"api_key"`
+	SecretKey string `mapstructure:"secret_key"`
 
 	RawSSHTimeout   string `mapstructure:"ssh_timeout"`
 	RawStateTimeout string `mapstructure:"state_timeout"`
@@ -100,9 +100,9 @@ func (b *Builder) Prepare(raws ...interface{}) ([]string, error) {
 		b.config.APIKey = os.Getenv("CLOUDSTACK_API_KEY")
 	}
 
-	if b.config.Secret == "" {
+	if b.config.SecretKey == "" {
 		// Default to environment variable for API secret
-		b.config.Secret = os.Getenv("CLOUDSTACK_SECRET")
+		b.config.SecretKey = os.Getenv("CLOUDSTACK_SECRET_KEY")
 	}
 
 	if b.config.HTTPPortMin == 0 {
@@ -159,7 +159,7 @@ func (b *Builder) Prepare(raws ...interface{}) ([]string, error) {
 	templates := map[string]*string{
 		"api_url":               &b.config.APIURL,
 		"api_key":               &b.config.APIKey,
-		"secret":                &b.config.Secret,
+		"secret_key":            &b.config.SecretKey,
 		"ssh_timeout":           &b.config.RawSSHTimeout,
 		"state_timeout":         &b.config.RawStateTimeout,
 		"detach_iso_wait":       &b.config.RawDetachISOWait,
@@ -186,7 +186,7 @@ func (b *Builder) Prepare(raws ...interface{}) ([]string, error) {
 	}
 
 	validates := map[string]*string{
-		"user_data":             &b.config.UserData,
+		"user_data": &b.config.UserData,
 	}
 
 	for n, ptr := range validates {
@@ -212,9 +212,9 @@ func (b *Builder) Prepare(raws ...interface{}) ([]string, error) {
 			errs, errors.New("CLOUDSTACK_API_KEY in env (APIKey in json) must be specified"))
 	}
 
-	if b.config.Secret == "" {
+	if b.config.SecretKey == "" {
 		errs = packer.MultiErrorAppend(
-			errs, errors.New("CLOUDSTACK_SECRET in env (Secret in json) must be specified"))
+			errs, errors.New("CLOUDSTACK_SECRET_KEY in env (SecretKey in json) must be specified"))
 	}
 
 	if b.config.ServiceOfferingId == "" {
@@ -257,14 +257,14 @@ func (b *Builder) Prepare(raws ...interface{}) ([]string, error) {
 		return nil, errs
 	}
 
-	common.ScrubConfig(b.config, b.config.APIKey, b.config.Secret)
+	common.ScrubConfig(b.config, b.config.APIKey, b.config.SecretKey)
 	return nil, nil
 }
 
 func (b *Builder) Run(ui packer.Ui, hook packer.Hook, cache packer.Cache) (packer.Artifact, error) {
 	// Initialize the Cloudstack API client
 	client := gopherstack.CloudstackClient{}.New(b.config.APIURL, b.config.APIKey,
-		b.config.Secret, b.config.InsecureSkipVerify)
+		b.config.SecretKey, b.config.InsecureSkipVerify)
 
 	// Set up the state
 	state := new(multistep.BasicStateBag)
