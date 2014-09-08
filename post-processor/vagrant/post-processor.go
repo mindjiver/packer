@@ -16,13 +16,14 @@ import (
 )
 
 var builtins = map[string]string{
-	"mitchellh.amazonebs":         "aws",
-	"mitchellh.amazon.instance":   "aws",
-	"mitchellh.virtualbox":        "virtualbox",
-	"mitchellh.vmware":            "vmware",
-	"pearkes.digitalocean":        "digitalocean",
-	"packer.parallels":            "parallels",
-	"mindjiver.cloudstack":        "cloudstack",
+	"mitchellh.amazonebs":       "aws",
+	"mitchellh.amazon.instance": "aws",
+	"mitchellh.virtualbox":      "virtualbox",
+	"mitchellh.vmware":          "vmware",
+	"pearkes.digitalocean":      "digitalocean",
+	"packer.parallels":          "parallels",
+	"MSOpenTech.hyperv":         "hyperv",
+	"mindjiver.cloudstack":      "cloudstack",
 }
 
 type Config struct {
@@ -221,6 +222,8 @@ func providerForName(name string) Provider {
 		return new(VMwareProvider)
 	case "parallels":
 		return new(ParallelsProvider)
+	case "hyperv":
+		return new(HypervProvider)
 	case "cloudstack":
 		return new(CloudStackProvider)
 	default:

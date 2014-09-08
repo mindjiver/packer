@@ -52,8 +52,24 @@ func (b *Builder) Run(ui packer.Ui, hook packer.Hook, cache packer.Cache) (packe
 
 	// Build the steps.
 	steps := []multistep.Step{
+		&vmwcommon.StepPrepareTools{
+			RemoteType:        b.config.RemoteType,
+			ToolsUploadFlavor: b.config.ToolsUploadFlavor,
+		},
 		&vmwcommon.StepOutputDir{
 			Force: b.config.PackerForce,
+		},
+		&common.StepCreateFloppy{
+			Files: b.config.FloppyFiles,
+		},
+		&vmwcommon.StepHTTPServer{
+			HTTPDir:     b.config.HTTPDir,
+			HTTPPortMin: b.config.HTTPPortMin,
+			HTTPPortMax: b.config.HTTPPortMax,
+		},
+		&vmwcommon.StepConfigureVNC{
+			VNCPortMin: b.config.VNCPortMin,
+			VNCPortMax: b.config.VNCPortMax,
 		},
 		&StepCloneVMX{
 			OutputDir: b.config.OutputDir,
@@ -69,11 +85,22 @@ func (b *Builder) Run(ui packer.Ui, hook packer.Hook, cache packer.Cache) (packe
 			DurationBeforeStop: 5 * time.Second,
 			Headless:           b.config.Headless,
 		},
+		&vmwcommon.StepTypeBootCommand{
+			BootCommand: b.config.BootCommand,
+			VMName:      b.config.VMName,
+			Tpl:         b.config.tpl,
+		},
 		&common.StepConnectSSH{
 			SSHAddress:     driver.SSHAddress,
 			SSHConfig:      vmwcommon.SSHConfigFunc(&b.config.SSHConfig),
 			SSHWaitTimeout: b.config.SSHWaitTimeout,
 			NoPty:          b.config.SSHSkipRequestPty,
+		},
+		&vmwcommon.StepUploadTools{
+			RemoteType:        b.config.RemoteType,
+			ToolsUploadFlavor: b.config.ToolsUploadFlavor,
+			ToolsUploadPath:   b.config.ToolsUploadPath,
+			Tpl:               b.config.tpl,
 		},
 		&common.StepProvision{},
 		&vmwcommon.StepShutdown{
@@ -81,6 +108,10 @@ func (b *Builder) Run(ui packer.Ui, hook packer.Hook, cache packer.Cache) (packe
 			Timeout: b.config.ShutdownTimeout,
 		},
 		&vmwcommon.StepCleanFiles{},
+		&vmwcommon.StepConfigureVMX{
+			CustomData: b.config.VMXDataPost,
+			SkipFloppy: true,
+		},
 		&vmwcommon.StepCleanVMX{},
 		&vmwcommon.StepCompactDisk{
 			Skip: b.config.SkipCompaction,

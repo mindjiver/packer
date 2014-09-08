@@ -26,8 +26,8 @@ Ubuntu to self-install. Still, the example serves to show the basic configuratio
 {
   "type": "virtualbox-iso",
   "guest_os_type": "Ubuntu_64",
-  "iso_url": "http://releases.ubuntu.com/12.04/ubuntu-12.04.3-server-amd64.iso",
-  "iso_checksum": "2cbe868812a871242cdcdd8f2fd6feb9",
+  "iso_url": "http://releases.ubuntu.com/12.04/ubuntu-12.04.5-server-amd64.iso",
+  "iso_checksum": "769474248a3897f4865817446f9a4a53",
   "iso_checksum_type": "md5",
   "ssh_username": "packer",
   "ssh_password": "packer",
@@ -121,8 +121,9 @@ each category, the available options are alphabetized and described.
 
 * `guest_additions_url` (string) - The URL to the guest additions ISO
   to upload. This can also be a file URL if the ISO is at a local path.
-  By default the VirtualBox builder will go and download the proper
-  guest additions ISO from the internet.
+  By default, the VirtualBox builder will attempt to find the guest additions
+  ISO on the local file system. If it is not available locally, the builder
+  will download the proper guest additions ISO from the internet.
 
 * `guest_os_type` (string) - The guest OS type being installed. By default
   this is "other", but you can get _dramatic_ performance improvements by
@@ -154,6 +155,10 @@ each category, the available options are alphabetized and described.
   port in this range to run the HTTP server. If you want to force the HTTP
   server to be on one port, make this minimum and maximum port the same.
   By default the values are 8000 and 9000, respectively.
+
+* `iso_interface` (string) - The type of controller that the ISO is attached
+  to, defaults to "ide".  When set to "sata", the drive is attached to an
+  AHCI SATA controller.
 
 * `iso_urls` (array of strings) - Multiple URLs for the ISO to download.
   Packer will try these in order. If anything goes wrong attempting to download
